@@ -46,6 +46,12 @@ ui.tags.style(
         display: none;
 
     }
+    .scrollable-sidebar {
+        overflow-y: auto;
+    }
+    .sidebar {
+    overflow-y: auto;
+}
     """
 )
 
@@ -98,7 +104,7 @@ with ui.card():
     ui.card_header("Sales By City")
 
     with ui.layout_sidebar():  
-        with ui.sidebar(bg="#f8f8f8", open='open', width="350px"):    
+        with ui.sidebar(bg="#f8f8f8", open='open', width="190px"):    
             ui.input_selectize(
                 "city",
                 "Select a City",
@@ -117,23 +123,23 @@ with ui.card():
                 multiple=True,
                 selected="Dallas (TX)"
             )
-    @render_plotly
-    def sales_over_time():
-        df = dat()
-        # print(list(df.city.unique()))
-        sales = df.groupby(["city", "month"])["quantity_ordered"].sum().reset_index()
-        sales_by_city = sales[sales["city"].isin(input.city())]
-        month_orders = calendar.month_name[1:]
-        fig = px.bar(
-            sales_by_city,
-            x="month",
-            y="quantity_ordered",
-            category_orders={"month": month_orders},
-        )
-        # Apply custom styling
-        fig = style_plotly_chart(fig, yaxis_title="Quantity Ordered")
-        #fig.update_traces(marker_color=color())
-        return fig
+        @render_plotly
+        def sales_over_time():
+            df = dat()
+            # print(list(df.city.unique()))
+            sales = df.groupby(["city", "month"])["quantity_ordered"].sum().reset_index()
+            sales_by_city = sales[sales["city"].isin(input.city())]
+            month_orders = calendar.month_name[1:]
+            fig = px.bar(
+                sales_by_city,
+                x="month",
+                y="quantity_ordered",
+                category_orders={"month": month_orders},
+            )
+            # Apply custom styling
+            fig = style_plotly_chart(fig, yaxis_title="Quantity Ordered")
+            #fig.update_traces(marker_color=color())
+            return fig
 
 # The code above did:
 # Group the data by city and month, then sum the quantities ordered
